@@ -272,21 +272,21 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                 if (section.hasHeader()) {
                     if (position == currentPos) {
                         // delegate the binding to the section header
-                        getSectionForPosition(position).onBindHeaderViewHolder(holder);
+                        getPositionInfo(position).getSection().onBindHeaderViewHolder(holder);
                         return;
                     }
                 }
 
                 if (section.hasFooter()) {
                     if (position == (currentPos + sectionTotal - 1)) {
-                        // delegate the binding to the section header
-                        getSectionForPosition(position).onBindFooterViewHolder(holder);
+                        // delegate the binding to the section footer
+                        getPositionInfo(position).getSection().onBindFooterViewHolder(holder);
                         return;
                     }
                 }
 
                 // delegate the binding to the section content
-                getSectionForPosition(position).onBindContentViewHolder(holder, getPositionInSection(position));
+                getPositionInfo(position).getSection().onBindContentViewHolder(holder, getPositionInSection(position));
                 return;
             }
 
@@ -316,6 +316,36 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
 
     @Override
     public int getItemViewType(int position) {
+        return getPositionInfo(position).getItemViewType();
+    }
+
+    public PositionInfo getPositionInfo(final int position) {
+        int currentPos = 0;
+
+        for (Map.Entry<String, Section> entry : sections.entrySet()) {
+            Section section = entry.getValue();
+
+            // ignore invisible sections
+            if (!section.isVisible()) {
+                continue;
+            }
+
+            int sectionTotal = section.getSectionItemsTotal();
+
+            // check if position is in this section
+            if (position >= currentPos && position <= (currentPos + sectionTotal - 1)) {
+                int viewType = getItemViewType(entry, position, currentPos);
+                int sectionItemViewType = viewType % VIEW_TYPE_QTY;
+                return new PositionInfo(position, viewType, sectionItemViewType, section);
+            }
+
+            currentPos += sectionTotal;
+        }
+
+        throw new IndexOutOfBoundsException("Invalid position");
+    }
+
+    private int getItemViewType(Map.Entry<String, Section> entry, final int position, final int currentPos) {
         /*
          Each Section has 6 "viewtypes":
          1) header
@@ -325,104 +355,50 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
          5) load failed
          6) empty
          */
-        int currentPos = 0;
+        Section section = entry.getValue();
+        int sectionTotal = section.getSectionItemsTotal();
+        int viewType = sectionViewTypeNumbers.get(entry.getKey());
 
-        for (Map.Entry<String, Section> entry : sections.entrySet()) {
-            Section section = entry.getValue();
-
-            // ignore invisible sections
-            if (!section.isVisible()) {
-                continue;
+        if (section.hasHeader()) {
+            if (position == currentPos) {
+                return viewType;
             }
-
-            int sectionTotal = section.getSectionItemsTotal();
-
-            // check if position is in this section
-            if (position >= currentPos && position <= (currentPos + sectionTotal - 1)) {
-
-                int viewType = sectionViewTypeNumbers.get(entry.getKey());
-
-                if (section.hasHeader()) {
-                    if (position == currentPos) {
-                        return viewType;
-                    }
-                }
-
-                if (section.hasFooter()) {
-                    if (position == (currentPos + sectionTotal - 1)) {
-                        return viewType + 1;
-                    }
-                }
-
-                switch (section.getState()) {
-                    case LOADED:
-                        return viewType + 2;
-                    case LOADING:
-                        return viewType + 3;
-                    case FAILED:
-                        return viewType + 4;
-                    case EMPTY:
-                        return viewType + 5;
-                    default:
-                        throw new IllegalStateException("Invalid state");
-                }
-            }
-
-            currentPos += sectionTotal;
         }
 
-        throw new IndexOutOfBoundsException("Invalid position");
+        if (section.hasFooter()) {
+            if (position == (currentPos + sectionTotal - 1)) {
+                return viewType + 1;
+            }
+        }
+
+        switch (section.getState()) {
+            case LOADED:
+                return viewType + 2;
+            case LOADING:
+                return viewType + 3;
+            case FAILED:
+                return viewType + 4;
+            case EMPTY:
+                return viewType + 5;
+            default:
+                throw new IllegalStateException("Invalid state");
+        }
     }
 
     /**
-     * Returns the Section ViewType of an item based on the position in the adapter.
-     *
-     * @param position position in the adapter
-     * @return one of the view types:
-     * <ul>
-     * <li>SectionedRecyclerViewAdapter.VIEW_TYPE_HEADER</li>
-     * <li>SectionedRecyclerViewAdapter.VIEW_TYPE_FOOTER</li>
-     * <li>SectionedRecyclerViewAdapter.VIEW_TYPE_ITEM_LOADED</li>
-     * <li>SectionedRecyclerViewAdapter.VIEW_TYPE_LOADING</li>
-     * <li>SectionedRecyclerViewAdapter.VIEW_TYPE_FAILED</li>
-     * <li>SectionedRecyclerViewAdapter.VIEW_TYPE_EMPTY</li>
-     * </ul>
+     * @deprecated Use {@link #getPositionInfo}
      */
+    @Deprecated
     public int getSectionItemViewType(int position) {
-        int viewType = getItemViewType(position);
-
-        return viewType % VIEW_TYPE_QTY;
+        return getPositionInfo(position).getSectionItemViewType();
     }
 
     /**
-     * Returns the Section object for a position in the adapter.
-     *
-     * @param position position in the adapter
-     * @return Section object for that position
+     * @deprecated Use {@link #getPositionInfo}
      */
+    @Deprecated
     public Section getSectionForPosition(int position) {
-
-        int currentPos = 0;
-
-        for (Map.Entry<String, Section> entry : sections.entrySet()) {
-            Section section = entry.getValue();
-
-            // ignore invisible sections
-            if (!section.isVisible()) {
-                continue;
-            }
-
-            int sectionTotal = section.getSectionItemsTotal();
-
-            // check if position is in this section
-            if (position >= currentPos && position <= (currentPos + sectionTotal - 1)) {
-                return section;
-            }
-
-            currentPos += sectionTotal;
-        }
-
-        throw new IndexOutOfBoundsException("Invalid position");
+        return getPositionInfo(position).getSection();
     }
 
     /**

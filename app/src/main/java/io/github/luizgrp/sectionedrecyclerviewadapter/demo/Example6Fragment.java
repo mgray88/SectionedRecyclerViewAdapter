@@ -42,7 +42,7 @@ public class Example6Fragment extends Fragment {
         glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                switch (sectionAdapter.getSectionItemViewType(position)) {
+                switch (sectionAdapter.getPositionInfo(position).getSectionItemViewType()) {
                     case SectionedRecyclerViewAdapter.VIEW_TYPE_HEADER:
                         return 2;
                     default:

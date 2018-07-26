@@ -322,13 +322,25 @@ public class SectionedRecyclerViewAdapterTest {
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
-    public void getSectionForPosition_withEmptyAdapter_throwsException() {
+    public void getPositionInfo_withEmptyAdapter_throwsException() {
         // When
-        sectionAdapter.getSectionForPosition(0);
+        sectionAdapter.getPositionInfo(0);
     }
 
     @Test
-    public void getSectionForPosition_withAdapterWithManySections_returnsCorrectSection() {
+    public void getPositionInfo_getPosition_withAdapterWithManySections_returnsSamePosition() {
+        // Given
+        addFourStatelessSectionsAndFourSectionsToAdapter();
+        int position = 1;
+
+        // When
+        final int result = sectionAdapter.getPositionInfo(position).getPosition();
+
+        assertThat(position, is(result));
+    }
+
+    @Test
+    public void getPositionInfo_getSection_withAdapterWithManySections_returnsCorrectSection() {
         // Given
         Section sectionStub1 = addStatelessSectionStubToAdapter();
         addInvisibleStatelessSectionStubToAdapter();
@@ -336,14 +348,14 @@ public class SectionedRecyclerViewAdapterTest {
         Section sectionStub3 = addStatelessSectionStubToAdapter();
 
         // When
-        Section result = sectionAdapter.getSectionForPosition(0);
-        Section result2 = sectionAdapter.getSectionForPosition(9);
-        Section result3 = sectionAdapter.getSectionForPosition(10);
-        Section result4 = sectionAdapter.getSectionForPosition(11);
-        Section result5 = sectionAdapter.getSectionForPosition(20);
-        Section result6 = sectionAdapter.getSectionForPosition(21);
-        Section result7 = sectionAdapter.getSectionForPosition(22);
-        Section result8 = sectionAdapter.getSectionForPosition(31);
+        Section result = sectionAdapter.getPositionInfo(0).getSection();
+        Section result2 = sectionAdapter.getPositionInfo(9).getSection();
+        Section result3 = sectionAdapter.getPositionInfo(10).getSection();
+        Section result4 = sectionAdapter.getPositionInfo(11).getSection();
+        Section result5 = sectionAdapter.getPositionInfo(20).getSection();
+        Section result6 = sectionAdapter.getPositionInfo(21).getSection();
+        Section result7 = sectionAdapter.getPositionInfo(22).getSection();
+        Section result8 = sectionAdapter.getPositionInfo(31).getSection();
 
         // Then
         assertThat(result, is(sectionStub1));
@@ -356,22 +368,16 @@ public class SectionedRecyclerViewAdapterTest {
         assertThat(result8, is(sectionStub3));
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void getSectionItemViewType_withEmptyAdapter_throwsException() {
-        // When
-        sectionAdapter.getSectionItemViewType(0);
-    }
-
     @Test
-    public void getSectionItemViewType_withAdapterWithManySections_returnsCorrectValuesForHeadedFootedStatelessSection() {
+    public void getPositionInfo_getSectionItemViewType_withAdapterWithManySections_returnsCorrectValuesForHeadedFootedStatelessSection() {
         // Given
         addFourStatelessSectionsAndFourSectionsToAdapter();
 
         // When
-        int viewTypeHeader = sectionAdapter.getSectionItemViewType(32);
-        int viewTypeItemStart = sectionAdapter.getSectionItemViewType(33);
-        int viewTypeItemEnd = sectionAdapter.getSectionItemViewType(42);
-        int viewTypeFooter = sectionAdapter.getSectionItemViewType(43);
+        int viewTypeHeader = sectionAdapter.getPositionInfo(32).getSectionItemViewType();
+        int viewTypeItemStart = sectionAdapter.getPositionInfo(33).getSectionItemViewType();
+        int viewTypeItemEnd = sectionAdapter.getPositionInfo(42).getSectionItemViewType();
+        int viewTypeFooter = sectionAdapter.getPositionInfo(43).getSectionItemViewType();
 
         // Then
         assertThat(viewTypeHeader, is(SectionedRecyclerViewAdapter.VIEW_TYPE_HEADER));
