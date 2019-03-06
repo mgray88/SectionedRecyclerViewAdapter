@@ -1,9 +1,5 @@
 package io.github.luizgrp.sectionedrecyclerviewadapter;
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +7,11 @@ import android.view.ViewGroup;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.recyclerview.widget.RecyclerView;
 
 import static io.github.luizgrp.sectionedrecyclerviewadapter.Section.State;
 
@@ -441,14 +442,6 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
         }
 
         throw new IndexOutOfBoundsException("Invalid position");
-    }
-
-    /**
-     * @deprecated Use {@link #getPositionInSection} instead.
-     */
-    @Deprecated
-    public int getSectionPosition(int position) {
-        return getPositionInSection(position);
     }
 
     /**

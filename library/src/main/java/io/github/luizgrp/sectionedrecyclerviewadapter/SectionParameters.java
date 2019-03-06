@@ -71,6 +71,8 @@ public final class SectionParameters {
 
     /**
      * Builder static factory method with mandatory parameters of {@link Section} (namely none).
+     *
+     * @return an instance of a builder
      */
     public static Builder builder() {
         return new Builder();
@@ -103,18 +105,6 @@ public final class SectionParameters {
          * Constructor with mandatory parameters of {@link Section} (namely none).
          */
         private Builder() {
-        }
-
-        /**
-         * Constructor with optional parameter for backward compatibility purposes.
-         *
-         * @param itemResourceId layout resource for Section's items
-         *
-         * @deprecated Use {@link #SectionParameters#builder} instead.
-         */
-        @Deprecated
-        public Builder(@LayoutRes int itemResourceId) {
-            this.itemResourceId = itemResourceId;
         }
 
         /**
