@@ -156,7 +156,7 @@ public class Example8Fragment extends Fragment {
 
                         list.remove(positionInSection);
 
-                        sectionAdapter.notifyItemRemovedFromSection(TAG, positionInSection);
+                        sectionAdapter.getSectionHandler(TAG).notifyItemRemoved(positionInSection);
                     }
                 }
             });
@@ -194,7 +194,7 @@ public class Example8Fragment extends Fragment {
 
                     list.add(positionToInsertItemAt, getRandomName());
 
-                    sectionAdapter.notifyItemInsertedInSection(TAG, positionToInsertItemAt);
+                    sectionAdapter.getSectionHandler(TAG).notifyItemInserted(positionToInsertItemAt);
                 }
             });
 
@@ -205,7 +205,7 @@ public class Example8Fragment extends Fragment {
 
                     list.clear();
 
-                    sectionAdapter.notifyItemRangeRemovedFromSection(TAG, 0, contentItemsTotal);
+                    sectionAdapter.getSectionHandler(TAG).notifyItemRangeRemoved(0, contentItemsTotal);
                 }
             });
         }
