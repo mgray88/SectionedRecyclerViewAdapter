@@ -1,9 +1,11 @@
 package io.github.luizgrp.sectionedrecyclerviewadapter;
 
-import androidx.annotation.LayoutRes;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.LayoutRes;
+import androidx.recyclerview.widget.RecyclerView;
+import io.github.luizgrp.sectionedrecyclerviewadapter.utils.EmptyViewHolder;
 
 /**
  * Abstract Section to be used with {@link SectionedRecyclerViewAdapter}.
@@ -388,7 +390,7 @@ public abstract class Section {
      * @return ViewHolder for the Header of this Section
      */
     public RecyclerView.ViewHolder getHeaderViewHolder(View view) {
-        return new SectionedRecyclerViewAdapter.EmptyViewHolder(view);
+        return new EmptyViewHolder(view);
     }
 
     /**
@@ -419,7 +421,7 @@ public abstract class Section {
      * @return ViewHolder for the Footer of this Section
      */
     public RecyclerView.ViewHolder getFooterViewHolder(View view) {
-        return new SectionedRecyclerViewAdapter.EmptyViewHolder(view);
+        return new EmptyViewHolder(view);
     }
 
     /**
@@ -450,7 +452,7 @@ public abstract class Section {
      * @return ViewHolder for the Loading state of this Section
      */
     public RecyclerView.ViewHolder getLoadingViewHolder(View view) {
-        return new SectionedRecyclerViewAdapter.EmptyViewHolder(view);
+        return new EmptyViewHolder(view);
     }
 
     /**
@@ -482,7 +484,7 @@ public abstract class Section {
      * @return ViewHolder for the Failed of this Section
      */
     public RecyclerView.ViewHolder getFailedViewHolder(View view) {
-        return new SectionedRecyclerViewAdapter.EmptyViewHolder(view);
+        return new EmptyViewHolder(view);
     }
 
     /**
@@ -514,7 +516,7 @@ public abstract class Section {
      * @return ViewHolder for the Empty of this Section
      */
     public RecyclerView.ViewHolder getEmptyViewHolder(View view) {
-        return new SectionedRecyclerViewAdapter.EmptyViewHolder(view);
+        return new EmptyViewHolder(view);
     }
 
     /**
