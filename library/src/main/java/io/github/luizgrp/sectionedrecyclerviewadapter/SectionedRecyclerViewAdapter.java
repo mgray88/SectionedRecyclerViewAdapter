@@ -21,12 +21,17 @@ import static io.github.luizgrp.sectionedrecyclerviewadapter.Section.State;
 @SuppressWarnings({"WeakerAccess", "SameParameterValue", "PMD.CollapsibleIfStatements"})
 public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public static final int VIEW_TYPE_LIST_HEADER = -2;
+    public static final int VIEW_TYPE_LIST_FOOTER = -1;
     public static final int VIEW_TYPE_HEADER = 0;
     public static final int VIEW_TYPE_FOOTER = 1;
     public static final int VIEW_TYPE_ITEM_LOADED = 2;
     public static final int VIEW_TYPE_LOADING = 3;
     public static final int VIEW_TYPE_FAILED = 4;
     public static final int VIEW_TYPE_EMPTY = 5;
+
+    private View listHeader = null;
+    private View listFooter = null;
 
     private final Map<String, Section> sections;
     private final Map<String, Integer> sectionViewTypeNumbers;
@@ -42,6 +47,12 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder = null;
+
+        if (viewType == VIEW_TYPE_LIST_HEADER) {
+            return new EmptyViewHolder(this.listHeader);
+        } else if (viewType == VIEW_TYPE_LIST_FOOTER) {
+            return new EmptyViewHolder(this.listFooter);
+        }
 
         for (Map.Entry<String, Integer> entry : sectionViewTypeNumbers.entrySet()) {
             if (viewType >= entry.getValue() && viewType < entry.getValue() + VIEW_TYPE_QTY) {
@@ -185,6 +196,24 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     /**
+     * Add a header view that is shown at the top of the recyclerview
+     *
+     * @param v     header view to add
+     */
+    public void addHeaderView(View v) {
+        this.listHeader = v;
+    }
+
+    /**
+     * Add a footer view that is shown at the bottom of the recyclerview
+     *
+     * @param v     footer view to add
+     */
+    public void addFooterView(View v) {
+        this.listFooter = v;
+    }
+
+    /**
      * Add a section to this recyclerview.
      *
      * @param tag     unique identifier of the section
@@ -257,8 +286,15 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (position == 0 && listHeader != null) {
+            return;
+        } else if (position == getItemCount() - 1 && listFooter != null) {
+            return;
+        }
 
         int currentPos = 0;
+
+        if (listHeader != null) currentPos++;
 
         for (Map.Entry<String, Section> entry : sections.entrySet()) {
             Section section = entry.getValue();
@@ -315,11 +351,17 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
             count += section.getSectionItemsTotal();
         }
 
-        return count;
+        return count + (listHeader != null ? 1 : 0) + (listFooter != null ? 1 : 0);
     }
 
     @Override
     public int getItemViewType(int position) {
+        if (position == 0 && listHeader != null) {
+            return VIEW_TYPE_LIST_HEADER;
+        } else if (position == getItemCount() - 1 && listFooter != null) {
+            return VIEW_TYPE_LIST_FOOTER;
+        }
+
         /*
          Each Section has 6 "viewtypes":
          1) header
